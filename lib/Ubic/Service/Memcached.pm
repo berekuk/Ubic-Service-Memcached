@@ -15,6 +15,10 @@ use warnings;
         maxsize => 500,
     });
 
+=head1 DESCRIPTION
+
+This module allows you to run memcached using L<Ubic>.
+
 =head1 METHODS
 
 =over
