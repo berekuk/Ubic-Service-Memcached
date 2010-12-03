@@ -19,6 +19,8 @@ use warnings;
 
 This module allows you to run memcached using L<Ubic>.
 
+Its status method tries to store C<Ubic::Service::Memcached-testkey> key in memcached to check that service is running.
+
 =head1 METHODS
 
 =over

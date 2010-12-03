@@ -1,6 +1,7 @@
 Revision history for Ubic-Service-Memcached
 
 {{$NEXT}}
+        Tests fixed and refactored.
 
 1.00    Fri Sep 03, 2010
         First opensource release.
