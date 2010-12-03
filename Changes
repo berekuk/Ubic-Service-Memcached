@@ -1,6 +1,8 @@
 Revision history for Ubic-Service-Memcached
 
 {{$NEXT}}
+
+1.01    Fri Dec 03, 2010
         Tests fixed and refactored.
 
 1.00    Fri Sep 03, 2010
