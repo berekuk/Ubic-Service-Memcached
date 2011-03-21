@@ -1,6 +1,8 @@
 Revision history for Ubic-Service-Memcached
 
 {{$NEXT}}
+
+1.02    Mon Mar 21, 2011
         'max_connections' option implemented
 
 1.01    Fri Dec 03, 2010
