@@ -72,6 +72,10 @@ If specified, memcached will be configured to write logs to given file.
 
 Optional log with ubic-specific messages.
 
+=item I<max_connections>
+
+Number of max simultaneous connections (<-c> memcached option).
+
 =item I<user>
 
 =item I<group>
@@ -88,6 +92,7 @@ sub new {
         pidfile => { type => SCALAR },
         maxsize => { type => SCALAR, regex => qr/^\d+$/, default => 640 },
         verbose => { type => SCALAR, optional => 1 },
+        max_connections => { type => SCALAR, optional => 1 },
         logfile => { type => SCALAR, optional => 1 },
         ubic_log => { type => SCALAR, optional => 1 },
         user => { type => SCALAR, default => 'root' },
@@ -104,6 +109,7 @@ sub start_impl {
     push @$params, "-u $self->{user}" if $self->{user} eq 'root';
     push @$params, "-p $self->{port}";
     push @$params, "-m $self->{maxsize}";
+    push @$params, "-c $self->{max_connections}" if defined $self->{max_connections};
     my $verbose = $self->{verbose};
     if (defined($verbose) && $verbose == 1) {
         push @$params, "-v";
