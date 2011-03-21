@@ -1,0 +1,5 @@
+libubic-service-memcached-perl (1.02) unstable; urgency=low
+
+  * Initial debian package release.
+
+ -- Vyacheslav Matjukhin (No comments) <mmcleric@yandex-team.ru>  Mon, 21 Mar 2011 23:23:17 +0300

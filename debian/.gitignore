@@ -1,0 +1,9 @@
+/*.prerm.debhelper
+/*.postinst.debhelper
+/*.postrm.debhelper
+/*.substvars
+/*.debhelper.log
+/files
+/libubic-service-psgi-perl
+/stamp-makefile-build
+/stamp-makefile-check
