@@ -74,7 +74,7 @@ Optional log with ubic-specific messages.
 
 =item I<max_connections>
 
-Number of max simultaneous connections (<-c> memcached option).
+Number of max simultaneous connections (C<-c> memcached option).
 
 =item I<user>
 
