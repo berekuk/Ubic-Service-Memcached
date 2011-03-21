@@ -4,6 +4,6 @@
 /*.substvars
 /*.debhelper.log
 /files
-/libubic-service-psgi-perl
+/libubic-service-memcached-perl
 /stamp-makefile-build
 /stamp-makefile-check

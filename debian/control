@@ -1,4 +1,4 @@
-Source: libubic-service-plack-perl
+Source: libubic-service-memcached-perl
 Maintainer: Vyacheslav Matjukhin (No comments) <mmcleric@yandex-team.ru>
 Section: perl
 Priority: optional
@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7), libcache-memcached-perl, libextutils-makemaker-
 
 Package: libubic-service-memcached-perl
 Architecture: all
-Depends: ${perl:Depends}, libcache-memcached-perl, libparams-validate-perl, libparent-perl, ubic
+Depends: ${perl:Depends}, memcached, libcache-memcached-perl, libparams-validate-perl, libparent-perl, ubic
 Conflicts: libubic-service-psgi-perl (< 1.10)
 Description: memcached as ubic service
  The Ubic::Service::Memcached module is a helper for running memcached
