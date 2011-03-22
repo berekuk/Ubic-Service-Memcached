@@ -1,6 +1,8 @@
 Revision history for Ubic-Service-Memcached
 
 {{$NEXT}}
+
+2.00    Tue Mar 22, 2011
         * 'other_argv' option implemented
         * using timeout_options() feature of Ubic::Service::Skeleton,
           manual trials loop removed
