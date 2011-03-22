@@ -1,3 +1,10 @@
+libubic-service-memcached-perl (2.01) unstable; urgency=low
+
+  * hotfix - 'pidfile' is now really optional
+  * 'uninitialized' warning fixed
+
+ -- Vyacheslav Matjukhin (No comments) <mmcleric@yandex-team.ru>  Tue, 22 Mar 2011 22:04:06 +0300
+
 libubic-service-memcached-perl (2.00) unstable; urgency=low
 
   * 'other_argv' option implemented

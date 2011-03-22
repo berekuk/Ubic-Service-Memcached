@@ -98,7 +98,7 @@ sub new {
     my $class = shift;
     my $params = validate(@_, {
         port => { type => SCALAR, regex => qr/^\d+$/ },
-        pidfile => { type => SCALAR },
+        pidfile => { type => SCALAR, optional => 1 },
         maxsize => { type => SCALAR, regex => qr/^\d+$/, default => 640 },
         verbose => { type => SCALAR, optional => 1 },
         max_connections => { type => SCALAR, optional => 1 },
@@ -128,10 +128,12 @@ sub start_impl {
     push @$params, "-c $self->{max_connections}" if defined $self->{max_connections};
 
     my $verbose = $self->{verbose};
-    if (defined($verbose) and $verbose == 1) {
-        push @$params, "-v";
-    } elsif ($verbose > 1) {
-        push @$params, "-vv";
+    if (defined $verbose) {
+        if ($verbose == 1) {
+            push @$params, "-v";
+        } elsif ($verbose > 1) {
+            push @$params, "-vv";
+        }
     }
 
     push @$params, $self->{other_argv} if defined $self->{other_argv};
