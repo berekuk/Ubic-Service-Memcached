@@ -1,6 +1,8 @@
 Revision history for Ubic-Service-Memcached
 
 {{$NEXT}}
+
+2.01    Tue Mar 22, 2011
         * hotfix - 'pidfile' is now really optional
         * 'uninitialized' warning fixed
 
