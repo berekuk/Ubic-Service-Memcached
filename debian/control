@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 7), libcache-memcached-perl, libextutils-makemaker-
 Package: libubic-service-memcached-perl
 Architecture: all
 Depends: ${perl:Depends}, memcached, libcache-memcached-perl, libparams-validate-perl, libparent-perl, ubic
-Conflicts: libubic-service-psgi-perl (< 1.10)
+Conflicts: yandex-ppb-memcached (< 2.0.0)
 Description: memcached as ubic service
  The Ubic::Service::Memcached module is a helper for running memcached
  with ubic.

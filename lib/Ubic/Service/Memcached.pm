@@ -31,9 +31,13 @@ use parent qw(Ubic::Service::Skeleton);
 use Ubic::Daemon qw(:all);
 use Ubic::Result qw(result);
 use Cache::Memcached;
-use Time::HiRes qw(sleep time);
+use Carp;
 
 use Params::Validate qw(:all);
+
+use Morpheus '/module/Ubic/Service/Memcached' => [
+    'pid_dir' => '?$PID_DIR',
+];
 
 =item B<< new($params) >>
 
@@ -51,6 +55,8 @@ Integer port number.
 
 Full path to pidfile. Pidfile will be managed by C<Ubic::Daemon>.
 
+You can skip this parameter if you have C</module/Ubic/Service/Memcached/pid_dir> morpheus option configured. In this case pidfile will be located in that directory and have name C<$port.pid>.
+
 =item I<maxsize>
 
 Max memcached memory size in megabytes. Default is 640MB.
@@ -59,10 +65,9 @@ Max memcached memory size in megabytes. Default is 640MB.
 
 Enable memcached logging.
 
-C<verbose=1>> turns on basic error and warning logs (i.e. it sets C<-v> switch),
+C<verbose=1> turns on basic error and warning logs (i.e. it sets C<-v> switch),
 
 C<verbose=2> turns on more detailed logging (i.e. it sets C<-vv> switch).
-
 
 =item I<logfile>
 
@@ -75,6 +80,10 @@ Optional log with ubic-specific messages.
 =item I<max_connections>
 
 Number of max simultaneous connections (C<-c> memcached option).
+
+=item I<other_argv>
+
+Any argv parameters to memcached binary which are not covered by this module's API.
 
 =item I<user>
 
@@ -97,30 +106,40 @@ sub new {
         ubic_log => { type => SCALAR, optional => 1 },
         user => { type => SCALAR, default => 'root' },
         group => { type => SCALAR, optional => 1},
+        other_argv => { type => SCALAR, optional => 1 },
     });
+    if (not defined $params->{pidfile}) {
+        unless (defined $PID_DIR) {
+            croak "pidfile parameter not defined, define it or set /module/Ubic/Service/Memcached/pid_dir configuration option";
+        }
+        $params->{pidfile} = "$PID_DIR/$params->{port}.pid";
+    }
     return bless $params => $class;
 }
 
 sub start_impl {
     my $self = shift;
 
-    my $params;
+    my $params = [];
 
     push @$params, "-u $self->{user}" if $self->{user} eq 'root';
     push @$params, "-p $self->{port}";
     push @$params, "-m $self->{maxsize}";
     push @$params, "-c $self->{max_connections}" if defined $self->{max_connections};
+
     my $verbose = $self->{verbose};
-    if (defined($verbose) && $verbose == 1) {
+    if (defined($verbose) and $verbose == 1) {
         push @$params, "-v";
     } elsif ($verbose > 1) {
         push @$params, "-vv";
     }
 
-    $params = join " ", @$params;
+    push @$params, $self->{other_argv} if defined $self->{other_argv};
+
+    my $params_str = join " ", @$params;
 
     start_daemon({
-        bin => "/usr/bin/memcached $params",
+        bin => "/usr/bin/memcached $params_str",
         pidfile => $self->{pidfile},
         ($self->{logfile} ?
             (
@@ -130,14 +149,7 @@ sub start_impl {
         ),
         ($self->{ubic_log} ? (ubic_log => $self->{ubic_log}) : ()),
     });
-    my $check_started = time;
-    for my $trial (1..10) {
-        if ($self->_is_available) {
-            return result('started');
-        }
-        sleep($trial / 10);
-    }
-    die "can't get answer in ".(time - $check_started)." seconds";
+    return result('starting');
 }
 
 sub stop_impl {
@@ -145,13 +157,18 @@ sub stop_impl {
     stop_daemon($self->{pidfile});
 }
 
+sub timeout_options {
+    { start => { step => 0.1, trials => 10 } };
+}
+
 sub _is_available {
     my $self = shift;
 
     # using undocumented function here; Cache::Memcached caches unavailable hosts,
-    # so without this call restart fails at least on etch
+    # so without this call restart fails (at least on debian etch)
     Cache::Memcached->forget_dead_hosts();
 
+    # TODO - this can fail if memcached binds only to specific interface
     my $client = Cache::Memcached->new({ servers => ["127.0.0.1:$self->{port}"] });
     my $key = 'Ubic::Service::Memcached-testkey';
     $client->set($key, 1);
@@ -198,4 +215,3 @@ sub port {
 =cut
 
 1;
-

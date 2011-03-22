@@ -1,3 +1,14 @@
+libubic-service-memcached-perl (2.00) unstable; urgency=low
+
+  * 'other_argv' option implemented
+  * using timeout_options() feature of Ubic::Service::Skeleton,
+    manual trials loop removed
+  * 'pidfile' parameter is now optional and will be derived implicitly
+    (morpheus configuration is required to use this feature)
+  * postinst removed
+
+ -- Vyacheslav Matjukhin (No comments) <mmcleric@yandex-team.ru>  Tue, 22 Mar 2011 20:03:11 +0300
+
 libubic-service-memcached-perl (1.02) unstable; urgency=low
 
   * Initial debian package release.
