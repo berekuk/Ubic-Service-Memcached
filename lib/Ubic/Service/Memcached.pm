@@ -106,14 +106,29 @@ sub new {
         ubic_log => { type => SCALAR, optional => 1 },
         user => { type => SCALAR, default => 'root' },
         group => { type => SCALAR, optional => 1},
+        ulimit => { type => HASHREF, optional => 1 },
         other_argv => { type => SCALAR, optional => 1 },
     });
+
+    if ($params->{ulimit}) {
+        # load BSD::Resource lazily, but fail fast if we're asked for it
+        eval "require BSD::Resource";
+        if ($@) {
+            die "BSD::Resource is not installed";
+        }
+        if (BSD::Resource->VERSION < 1.29) {
+            # 1.29 supports string names for resources
+            die "BSD::Resource >= 1.29 required";
+        }
+    }
+
     if (not defined $params->{pidfile}) {
         unless (defined $PID_DIR) {
             croak "pidfile parameter not defined, define it or set /module/Ubic/Service/Memcached/pid_dir configuration option";
         }
         $params->{pidfile} = "$PID_DIR/$params->{port}.pid";
     }
+
     return bless $params => $class;
 }
 
@@ -140,6 +155,18 @@ sub start_impl {
 
     my $params_str = join " ", @$params;
 
+    my $start_hook;
+    if (defined $self->{ulimit}) {
+        $start_hook = sub {
+            for my $name (keys %{$self->{ulimit}}) {
+                my $value = $self->{ulimit}{$name};
+                my $result = BSD::Resource::setrlimit($name, $value, $value);
+                unless ($result) {
+                    die "Failed to set $name=$value ulimit";
+                }
+            }
+        };
+    }
     start_daemon({
         bin => "/usr/bin/memcached $params_str",
         pidfile => $self->{pidfile},
@@ -149,6 +176,7 @@ sub start_impl {
             stderr => $self->{logfile},
             ) : ()
         ),
+        ($start_hook ? (start_hook => $start_hook) : ()),
         ($self->{ubic_log} ? (ubic_log => $self->{ubic_log}) : ()),
     });
     return result('starting');
