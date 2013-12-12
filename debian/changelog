@@ -1,3 +1,9 @@
+libubic-service-memcached-perl (2.02) unstable; urgency=low
+
+  * rlimits support
+
+ -- Serge Toropov <sombr@yandex-team.ru>  Thu, 12 Dec 2013 11:22:37 +0400
+
 libubic-service-memcached-perl (2.01) unstable; urgency=low
 
   * hotfix - 'pidfile' is now really optional
