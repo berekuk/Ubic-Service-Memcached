@@ -97,6 +97,7 @@ As usual, you can specify custom user and group values. Default is C<root:root>.
 sub new {
     my $class = shift;
     my $params = validate(@_, {
+        binary => { type => SCALAR, regex => qr/^.*\/memcached$/, default => '/usr/bin/memcached' },
         port => { type => SCALAR, regex => qr/^\d+$/ },
         pidfile => { type => SCALAR, optional => 1 },
         maxsize => { type => SCALAR, regex => qr/^\d+$/, default => 640 },
@@ -168,7 +169,7 @@ sub start_impl {
         };
     }
     start_daemon({
-        bin => "/usr/bin/memcached $params_str",
+        bin => "$self->{binary} $params_str",
         pidfile => $self->{pidfile},
         ($self->{logfile} ?
             (
